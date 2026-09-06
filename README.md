@@ -92,9 +92,28 @@ Each can also be overridden at runtime without touching the file:
 
 Set `$DebugChance` to 100 in the configuration cue to have every applied change written to the debug log.
 
+## Debugging
+
+Add this to the game's launch options — Steam, right click X4, **Properties → General → Launch Options**:
+
+```
+-debug all -logfile debuglog.txt
+```
+
+The log lands next to your savegames, in `~/Documents/Egosoft/X4/<userid>/debuglog.txt`. `all` turns on every one of the engine's debug channels; a narrower filter only makes sense once you know which channel a message uses, and the engine prints `Unknown debug filter` for a name it does not recognise.
+
+The mod itself is silent by default. Set `$DebugChance` to `100` in the configuration cue of `extension/md/drjele_khaak_pressure.xml`, re-run `./install.sh` and restart, and every applied change is written out:
+
+```
+DrJele Khaak Pressure: gate range 3 -> 6, outpost threshold 50000 (min 25000)
+DrJele Khaak Pressure: watching 214 sectors after rebuild
+```
+
+A patch whose XPath finds nothing is reported without any of that, at startup, by file and selector — so `grep -i drjele debuglog.txt` after a start is the quick check that the one patch here landed. Silence means it did.
+
 ## Removing it
 
-Take the extension out and the sliders stop being applied — but the values already written into the vanilla manager stay in the savegame, because they are the manager's own variables. They are reset the next time you start a new game, and can be put back by hand at any time from the in-game script editor or another mod. Nothing else of this mod persists; it adds no cues to the Kha'ak manager and stores no state of its own.
+Take the extension out and the sliders stop being applied — but the values already written into the vanilla manager stay in the savegame, because they are the manager's own variables. They are reset the next time you start a new game, and can be put back at any time by reinstalling this mod with the vanilla numbers in the configuration cue. Nothing else of this mod persists; it adds no cues to the Kha'ak manager and stores no state of its own.
 
 ## Publishing to the Steam Workshop
 
