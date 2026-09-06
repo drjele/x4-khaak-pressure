@@ -1,4 +1,4 @@
-# Kha'ak Pressure for X4: Foundations
+# Khaak Pressure for X4: Foundations
 
 The Kha'ak in X4 are a mining alarm, not an enemy. They watch the sectors within three gate jumps of one of their hives, add up how much ore, silicon and nividium is pulled out of each one, and when a sector's score crosses fifty thousand they drop an outpost on it. Everything about that is a number, and every one of those numbers is tuned for a galaxy where you are not supposed to notice them much.
 

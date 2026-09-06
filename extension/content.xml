@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <content id="drjele_khaak_pressure"
-         name="Kha'ak Pressure"
+         name="Khaak Pressure"
          description="Sliders for how far the Kha'ak reach and how hard they push: the gate range a hive can place outposts within, the mining activity an outpost costs, and a multiplier on the chance mining spawns a Kha'ak group. Works on an existing savegame."
          author="drjele"
          version="100"
@@ -8,7 +8,7 @@
          save="0"
 >
     <text language="44"
-          name="Kha'ak Pressure"
+          name="Khaak Pressure"
           description="Sliders for how far the Kha'ak reach and how hard they push: the gate range a hive can place outposts within, the mining activity an outpost costs, and a multiplier on the chance mining spawns a Kha'ak group. Works on an existing savegame."
     />
     <dependency version="900"/>

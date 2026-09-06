@@ -26,7 +26,7 @@
                         cue="md.Simple_Menu_Options.Register_Option"
                         param="table[
             $id        = 'drjele_khaak_hive_gate_range_jumps',
-            $category  = 'Kha\'ak Pressure',
+            $category  = 'Khaak Pressure',
             $name      = 'Hive reach',
             $mouseover = 'How many gate jumps from one of their hives the Kha\'ak will watch a sector and place an outpost in it. Vanilla is 3. Raising it lets them follow your mining much further out; at 10 they watch most of the galaxy, which costs some CPU on the once-a-minute evaluation.',
             $type      = 'slidercell',
@@ -38,7 +38,7 @@
                         cue="md.Simple_Menu_Options.Register_Option"
                         param="table[
             $id        = 'drjele_khaak_outpost_threshold_points',
-            $category  = 'Kha\'ak Pressure',
+            $category  = 'Khaak Pressure',
             $name      = 'Outpost cost',
             $mouseover = 'Mining activity a sector has to build up before the Kha\'ak look for somewhere to plant an outpost. Vanilla is 50000, which is roughly 20000 units of silicon mined by you in one sector. Lower means they come sooner. The floor a sector needs to be considered at all is always half this number.',
             $type      = 'slidercell',
@@ -50,7 +50,7 @@
                         cue="md.Simple_Menu_Options.Register_Option"
                         param="table[
             $id        = 'drjele_khaak_spawn_chance_factor_x',
-            $category  = 'Kha\'ak Pressure',
+            $category  = 'Khaak Pressure',
             $name      = 'Ambush chance multiplier',
             $mouseover = 'Multiplies the chance that mining an asteroid drops a Kha\'ak group on top of you. Vanilla is 1x, which is 0.03 percent per mined unit at full sector activity. Only applies in sectors that already hold a Kha\'ak outpost - elsewhere the chance is zero whatever this says.',
             $type      = 'slidercell',
