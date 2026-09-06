@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One patch, for the one setting that cannot be applied by writing a variable.
+
+  $BaseSpawnChance is a local of GetSuitableBaseStationForShipSpawn, assigned fresh on every call,
+  so anything written into it from outside is overwritten before it is ever read. Scaling it right
+  after vanilla sets it is therefore the only place the multiplier can go.
+
+  Vanilla's chance, per resource-depletion event in a sector that holds a Kha'ak outpost, is
+
+    chance = (sector Kha'ak activity / 500000) * 0.03 * units mined * resource factor
+
+  as a percentage, with the resource factor 1.2 for ore and silicon and 2.7 for nividium. The
+  multiplier lands on the 0.03, so it scales the whole thing linearly; the game clamps the result
+  at a certain hit, which a high multiplier reaches easily on a large mining haul.
+
+  The setting is read the same way as the rest: the global the options menu writes wins, otherwise
+  the table drjele_khaak_pressure.xml publishes, otherwise the vanilla literal 1. All of them are
+  global variables, so a configuration script that fails to load leaves the vanilla chance intact
+  rather than breaking Kha'ak ship spawning.
+-->
+<diff>
+
+    <add sel="//library[@name='GetSuitableBaseStationForShipSpawn']/actions/do_if[@value='$CheckSectorChance']/set_value[@name='$BaseSpawnChance']" pos="after">
+        <set_value name="$DrJeleSpawnFactor" exact="if global.$DrJeleKhaakSpawnChanceFactor? then global.$DrJeleKhaakSpawnChanceFactor else (if global.$DrJeleKhaakPressureConfig? then global.$DrJeleKhaakPressureConfig.$SpawnChanceFactor else 1)"/>
+        <set_value name="$BaseSpawnChance" exact="$BaseSpawnChance * $DrJeleSpawnFactor"/>
+    </add>
+
+</diff>

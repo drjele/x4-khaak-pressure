@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<content id="drjele_khaak_pressure"
+         name="Kha'ak Pressure"
+         description="Sliders for how far the Kha'ak reach and how hard they push: the gate range a hive can place outposts within, the mining activity an outpost costs, and a multiplier on the chance mining spawns a Kha'ak group. Works on an existing savegame."
+         author="drjele"
+         version="100"
+         date="2026-09-06"
+         save="0"
+>
+    <text language="44"
+          name="Kha'ak Pressure"
+          description="Sliders for how far the Kha'ak reach and how hard they push: the gate range a hive can place outposts within, the mining activity an outpost costs, and a multiplier on the chance mining spawns a Kha'ak group. Works on an existing savegame."
+    />
+    <dependency version="900"/>
+    <dependency id="ws_2042901274" optional="true" name="SirNukes Mod Support APIs" comment="only for the in-game options menu; the mod works without it"/>
+</content>

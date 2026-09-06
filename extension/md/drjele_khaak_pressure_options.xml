@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  In-game options, through SirNukes Mod Support APIs. Everything that touches that API lives in
+  this file, so if the API is not installed nothing here ever runs and the mod keeps working off
+  the constants in drjele_khaak_pressure.xml.
+
+  All three callbacks only ever write the global override variables the rest of the mod already
+  reads, so neither the apply step nor the patched vanilla library knows anything about menus.
+-->
+<mdscript name="DrJele_KhaakPressureOptions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+    <cues>
+
+        <!--
+          The API stores an option's value in the savegame under its $id, and hands it straight back
+          to the widget as its start value. A stored value outside the slider's range fails widget
+          validation and takes the whole Extension Options menu down with it, so the range and the
+          unit of an option must never change under a $id that has already shipped - give it a new
+          one instead. That is why these ids carry their unit.
+        -->
+        <cue name="RegisterOptions" instantiate="true" version="1">
+            <conditions>
+                <event_cue_signalled cue="md.Simple_Menu_Options.Reloaded"/>
+            </conditions>
+            <actions>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_khaak_hive_gate_range_jumps',
+            $category  = 'Kha\'ak Pressure',
+            $name      = 'Hive reach',
+            $mouseover = 'How many gate jumps from one of their hives the Kha\'ak will watch a sector and place an outpost in it. Vanilla is 3. Raising it lets them follow your mining much further out; at 10 they watch most of the galaxy, which costs some CPU on the once-a-minute evaluation.',
+            $type      = 'slidercell',
+            $default   = 3,
+            $args      = table[$min = 3, $max = 10, $step = 1, $suffix = ' jumps'],
+            $callback  = OnHiveGateRangeChanged,
+            ]"/>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_khaak_outpost_threshold_points',
+            $category  = 'Kha\'ak Pressure',
+            $name      = 'Outpost cost',
+            $mouseover = 'Mining activity a sector has to build up before the Kha\'ak look for somewhere to plant an outpost. Vanilla is 50000, which is roughly 20000 units of silicon mined by you in one sector. Lower means they come sooner. The floor a sector needs to be considered at all is always half this number.',
+            $type      = 'slidercell',
+            $default   = 50000,
+            $args      = table[$min = 10000, $max = 50000, $step = 5000],
+            $callback  = OnOutpostThresholdChanged,
+            ]"/>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_khaak_spawn_chance_factor_x',
+            $category  = 'Kha\'ak Pressure',
+            $name      = 'Ambush chance multiplier',
+            $mouseover = 'Multiplies the chance that mining an asteroid drops a Kha\'ak group on top of you. Vanilla is 1x, which is 0.03 percent per mined unit at full sector activity. Only applies in sectors that already hold a Kha\'ak outpost - elsewhere the chance is zero whatever this says.',
+            $type      = 'slidercell',
+            $default   = 1,
+            $args      = table[$min = 1, $max = 100, $step = 1, $suffix = 'x'],
+            $callback  = OnSpawnChanceFactorChanged,
+            ]"/>
+            </actions>
+        </cue>
+
+        <!--
+          The two applied settings are pushed into the vanilla manager, so moving either slider has
+          to signal the apply cue; the ambush multiplier is read at the moment the vanilla library
+          rolls, so writing the global is all it needs.
+        -->
+        <cue name="OnHiveGateRangeChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleKhaakHiveGateRange" exact="event.param.$value"/>
+                <signal_cue_instantly cue="md.DrJele_KhaakPressure.Reapply"/>
+            </actions>
+        </cue>
+
+        <cue name="OnOutpostThresholdChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleKhaakOutpostThreshold" exact="event.param.$value"/>
+                <signal_cue_instantly cue="md.DrJele_KhaakPressure.Reapply"/>
+            </actions>
+        </cue>
+
+        <cue name="OnSpawnChanceFactorChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleKhaakSpawnChanceFactor" exact="event.param.$value"/>
+            </actions>
+        </cue>
+
+    </cues>
+</mdscript>

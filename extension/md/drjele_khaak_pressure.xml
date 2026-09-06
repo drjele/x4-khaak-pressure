@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mdscript name="DrJele_KhaakPressure" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="md.xsd">
+    <cues>
+
+        <!--
+          Configuration. Re-read on every savegame load, so editing a value below and reloading is
+          enough - no new game required. Each one can also be overridden at runtime without touching
+          this file, by setting the matching global variable:
+            <set_value name="global.$DrJeleKhaakHiveGateRange" exact="6"/>
+          Those globals are also what the in-game options menu writes - see
+          drjele_khaak_pressure_options.xml.
+
+          Two of the three settings are applied by writing into the vanilla Kha'ak manager's own
+          variables (see Apply below) rather than by patching its script. That is deliberate: the
+          numbers live on a cue that runs once per game, so an XPath patch adding a value to its
+          actions would only ever reach a new game, and it would collide with the other mods that
+          patch the same file. Writing the variable reaches an existing savegame too.
+
+          The third one, the spawn chance factor, is a local inside a vanilla library that is reset
+          on every call, so it cannot be written from outside - that one does need a patch, and it
+          lives in khaak_activity.xml next to this file.
+        -->
+        <cue name="Configuration" instantiate="true" namespace="static" version="1">
+            <conditions>
+                <event_cue_signalled cue="md.Setup.Start"/>
+            </conditions>
+            <actions>
+                <set_value name="$HiveGateRange" exact="3" comment="gate jumps within which a hive may place an outpost, and the radius of the sectors it watches; 3 is vanilla"/>
+                <set_value name="$OutpostThreshold" exact="50000" comment="mining activity a sector must reach before the Kha'ak look for somewhere to place an outpost; 50000 is vanilla"/>
+                <set_value name="$SpawnChanceFactor" exact="1" comment="multiplies the chance that mining next to an outpost spawns a Kha'ak group; 1 is vanilla"/>
+                <set_value name="$DebugChance" exact="0" comment="100 writes every applied change to the debug log"/>
+
+                <set_value name="global.$DrJeleKhaakPressureConfig" exact="table[$HiveGateRange     = $HiveGateRange,
+                                                                          $OutpostThreshold  = $OutpostThreshold,
+                                                                          $SpawnChanceFactor = $SpawnChanceFactor,
+                                                                          $DebugChance       = $DebugChance]"/>
+            </actions>
+        </cue>
+
+        <!--
+          Applied on every savegame load, and again whenever a slider moves.
+
+          The parent instantiates on md.Setup.Start, which the game signals on a new game and on
+          every load; the child then waits for the vanilla manager to have run. Waiting matters:
+          both cues trigger off the same signal and the order between two scripts is not defined,
+          so the settings would land on variables that do not exist yet perhaps half the time.
+
+          $HiveStationGateRange existing is also the test for "the Kha'ak are active at all". The
+          vanilla manager only initialises in the main galaxy, so in a Timelines scenario, a
+          tutorial or the workshop map the check never passes and this mod stays completely inert.
+        -->
+        <cue name="Apply" instantiate="true" version="1">
+            <conditions>
+                <event_cue_signalled cue="md.Setup.Start"/>
+                <check_value value="player.galaxy.macro == macro.xu_ep2_universe_macro" comment="the same guard the vanilla manager uses; without it the child below would poll forever in a Timelines scenario, a tutorial or the workshop map, where the Kha'ak manager never initialises"/>
+            </conditions>
+            <cues>
+                <cue name="ApplyWhenManagerReady" checkinterval="5s">
+                    <conditions>
+                        <check_value value="md.Khaak_Activity.Manager.$HiveStationGateRange?"/>
+                    </conditions>
+                    <actions>
+                        <include_actions ref="ApplySettings"/>
+                    </actions>
+                </cue>
+            </cues>
+        </cue>
+
+        <!-- Signalled by the options menu when a slider moves. -->
+        <cue name="Reapply" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+                <check_value value="md.Khaak_Activity.Manager.$HiveStationGateRange?"/>
+            </conditions>
+            <actions>
+                <include_actions ref="ApplySettings"/>
+            </actions>
+        </cue>
+
+        <!--
+          Every setting is looked up the same way: the global the options menu writes wins, otherwise
+          the table Configuration publishes, otherwise the vanilla literal. All of them are global
+          variables, so a configuration that fails to load degrades to stock behaviour rather than
+          breaking the Kha'ak. The table is tested for existence rather than the field inside it, so
+          a value edited down to the vanilla number is still read as configured.
+        -->
+        <library name="ApplySettings">
+            <actions>
+                <set_value name="$Config" exact="if global.$DrJeleKhaakPressureConfig? then global.$DrJeleKhaakPressureConfig else table[]"/>
+                <set_value name="$DebugChance" exact="if $Config.$DebugChance? then $Config.$DebugChance else 0"/>
+
+                <set_value name="$GateRange" exact="if global.$DrJeleKhaakHiveGateRange? then global.$DrJeleKhaakHiveGateRange else (if $Config.$HiveGateRange? then $Config.$HiveGateRange else 3)"/>
+                <set_value name="$Threshold" exact="if global.$DrJeleKhaakOutpostThreshold? then global.$DrJeleKhaakOutpostThreshold else (if $Config.$OutpostThreshold? then $Config.$OutpostThreshold else 50000)"/>
+
+                <!--
+                  Half, as configured. Note this is not the vanilla ratio: vanilla pairs a trigger of
+                  50000 with a candidate floor of 40000, so even at the top of the slider the pool of
+                  sectors an outpost may land in is wider here than in the stock game. The rate at
+                  which outposts appear is unchanged by that on its own - the trigger is what gates it
+                  - but they spread further from the single hottest sector.
+                -->
+                <set_value name="$MinThreshold" exact="$Threshold / 2"/>
+
+                <set_value name="md.Khaak_Activity.Manager.$SpawnOutpostThreshold" exact="$Threshold"/>
+                <set_value name="md.Khaak_Activity.Manager.$MinSpawnOutpostThreshold" exact="$MinThreshold"/>
+
+                <!--
+                  The gate range is the expensive one, so it is only touched when it actually moved.
+                  The manager derives $WatchedSectors from it, but only ever recomputes that set when
+                  a station is created or destroyed - so changing the number alone would leave the
+                  watched set stale until the next hive dies. Rebuilding it here is what makes the
+                  slider take effect immediately.
+                -->
+                <do_if value="md.Khaak_Activity.Manager.$HiveStationGateRange != $GateRange">
+                    <debug_text text="'DrJele Khaak Pressure: gate range %s -> %s, outpost threshold %s (min %s)'.[md.Khaak_Activity.Manager.$HiveStationGateRange, $GateRange, $Threshold, $MinThreshold]" chance="$DebugChance"/>
+                    <set_value name="md.Khaak_Activity.Manager.$HiveStationGateRange" exact="$GateRange"/>
+                    <include_actions ref="RebuildWatchedSectors"/>
+                </do_if>
+            </actions>
+        </library>
+
+        <!--
+          Recomputes $WatchedSectors the way the vanilla StationDestroyed_v2 cue does: every sector
+          within gate range of a hive, plus the sector of every outpost. Sectors that fall out of
+          range lose their accumulated activity as well, which is again what vanilla does when a
+          station dies - leaving a stale score behind would let a sector the Kha'ak no longer watch
+          hand them a free outpost the moment it comes back into range.
+
+          The group is snapshotted into a list before the removal pass; a group cannot be mutated
+          while it is being iterated.
+        -->
+        <library name="RebuildWatchedSectors">
+            <actions>
+                <set_value name="$DebugChance" exact="if global.$DrJeleKhaakPressureConfig? then global.$DrJeleKhaakPressureConfig.$DebugChance else 0"/>
+                <set_value name="$ValidSectors" exact="[]"/>
+                <do_for_each name="$Hive" in="md.Khaak_Activity.Manager.$HiveStations">
+                    <find_sector_in_range name="$ValidSectors" object="$Hive"
+                                          excluded="md.Khaak_Activity.Manager.$IgnoredSectors"
+                                          maxdistance="md.Khaak_Activity.Manager.$HiveStationGateRange"
+                                          multiple="true" append="true"/>
+                </do_for_each>
+                <do_for_each name="$Outpost" in="md.Khaak_Activity.Manager.$Outposts">
+                    <append_to_list name="$ValidSectors" exact="$Outpost.sector"/>
+                </do_for_each>
+
+                <!-- Groups are sets, so adding one that is already in is free. -->
+                <do_for_each name="$Sector" in="$ValidSectors">
+                    <add_to_group groupname="md.Khaak_Activity.Manager.$WatchedSectors" object="$Sector"/>
+                </do_for_each>
+
+                <set_value name="$OldSectors" exact="md.Khaak_Activity.Manager.$WatchedSectors.list"/>
+                <do_for_each name="$Sector" in="$OldSectors">
+                    <do_if value="$ValidSectors.indexof.{$Sector} == 0">
+                        <remove_value name="md.Khaak_Activity.Manager.$SectorMiningActivityTable.{$Sector}"/>
+                        <remove_value name="md.Khaak_Activity.Manager.$SectorKhaakActivityTable.{$Sector}"/>
+                        <remove_from_group group="md.Khaak_Activity.Manager.$WatchedSectors" object="$Sector"/>
+                    </do_if>
+                </do_for_each>
+
+                <debug_text text="'DrJele Khaak Pressure: watching %s sectors after rebuild'.[md.Khaak_Activity.Manager.$WatchedSectors.count]" chance="$DebugChance"/>
+
+                <remove_value name="$ValidSectors"/>
+                <remove_value name="$OldSectors"/>
+            </actions>
+        </library>
+
+    </cues>
+</mdscript>
