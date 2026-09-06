@@ -100,7 +100,7 @@ Add this to the game's launch options â€” Steam, right click X4, **Properties â†
 -debug all -logfile debuglog.txt
 ```
 
-The log lands next to your savegames, in `~/Documents/Egosoft/X4/<userid>/debuglog.txt`. `all` turns on every one of the engine's debug channels; a narrower filter only makes sense once you know which channel a message uses, and the engine prints `Unknown debug filter` for a name it does not recognise.
+The log lands next to your savegames: `$HOME/.config/EgoSoft/X4/<userid>/debuglog.txt` on Linux, `Documents\Egosoft\X4\<userid>\debuglog.txt` on Windows. If Steam is installed as a snap it runs the game with a redirected home, which puts both under `~/snap/steam/common/`. `all` turns on every one of the engine's debug channels; a narrower filter only makes sense once you know which channel a message uses, and the engine prints `Unknown debug filter` for a name it does not recognise.
 
 The mod itself is silent by default. Set `$DebugChance` to `100` in the configuration cue of `extension/md/drjele_khaak_pressure.xml`, re-run `./install.sh` and restart, and every applied change is written out:
 
