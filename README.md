@@ -142,7 +142,7 @@ Working, verified in game on 9.00, on a savegame several hundred hours old — t
 | Patch | the XPath selector matches exactly one node, the merged XML is structurally valid, and the game reports no patch error for the file |
 | Script errors | none |
 
-Two of the outposts landed in sectors that vanilla's 3-jump reach does not cover from any hive, which is the point of the reach slider. The half-ratio floor is the one thing a long run cannot confirm on its own — it changes *where* placements land rather than how many, and separating that from ordinary mining pressure needs a controlled comparison that has not been run.
+What the run does not measure is how much of that rate comes from the lowered cost and how much from the wider reach; both were changed at once. The half-ratio floor is likewise unconfirmed on its own — it changes *where* placements land rather than how many, and separating that from ordinary mining pressure needs a controlled comparison that has not been run.
 
 ## Legal
 
