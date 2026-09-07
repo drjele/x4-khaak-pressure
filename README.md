@@ -46,6 +46,7 @@ That does not make outposts appear more often: the trigger is what gates a place
 If you want the ratio back, change one line in `drjele_khaak_pressure.xml`:
 
 ```xml
+
 <set_value name="$MinThreshold" exact="($Threshold * 8) / 10"/>
 ```
 
@@ -66,6 +67,7 @@ The Kha'ak numbers all live as variables on a single cue, `Manager` in `md/khaak
 So the two applied settings are written straight into the vanilla manager's variables instead:
 
 ```xml
+
 <set_value name="md.Khaak_Activity.Manager.$SpawnOutpostThreshold" exact="$Threshold"/>
 ```
 
@@ -92,6 +94,7 @@ The in-game sliders need [SirNukes Mod Support APIs](https://steamcommunity.com/
 Each can also be overridden at runtime without touching the file:
 
 ```xml
+
 <set_value name="global.$DrJeleKhaakHiveGateRange" exact="6"/>
 <set_value name="global.$DrJeleKhaakOutpostThreshold" exact="20000"/>
 <set_value name="global.$DrJeleKhaakSpawnChanceFactor" exact="10"/>
