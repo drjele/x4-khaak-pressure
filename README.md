@@ -12,11 +12,11 @@ This mod turns three of those numbers into sliders: how far a hive reaches, how 
 
 ## The sliders
 
-| Slider | Range | Vanilla | What it is |
-|---|---|---|---|
-| **Hive reach** | 3 – 10 jumps | 3 | `$HiveStationGateRange` — how far from a hive the Kha'ak watch sectors and may place an outpost |
-| **Outpost cost** | 10 000 – 50 000 | 50 000 | `$SpawnOutpostThreshold` — the mining activity that triggers a placement. `$MinSpawnOutpostThreshold`, the floor a sector needs to be a candidate, follows at **half** this |
-| **Ambush chance multiplier** | 1x – 100x | 1x | scales `$BaseSpawnChance`, the chance that mining an asteroid spawns a Kha'ak group |
+| Slider                       | Range           | Vanilla | What it is                                                                                                                                                                  |
+|------------------------------|-----------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Hive reach**               | 3 – 10 jumps    | 3       | `$HiveStationGateRange` — how far from a hive the Kha'ak watch sectors and may place an outpost                                                                             |
+| **Outpost cost**             | 10 000 – 50 000 | 50 000  | `$SpawnOutpostThreshold` — the mining activity that triggers a placement. `$MinSpawnOutpostThreshold`, the floor a sector needs to be a candidate, follows at **half** this |
+| **Ambush chance multiplier** | 1x – 100x       | 1x      | scales `$BaseSpawnChance`, the chance that mining an asteroid spawns a Kha'ak group                                                                                         |
 
 ### One place where the defaults are not vanilla
 
@@ -74,8 +74,8 @@ The apply step runs on `md.Setup.Start` — signalled on a new game and on every
 
 The third setting does need a patch, and gets one:
 
-| Patch | Change |
-|---|---|
+| Patch                   | Change                                                            |
+|-------------------------|-------------------------------------------------------------------|
 | `md/khaak_activity.xml` | Scales `$BaseSpawnChance` right after the vanilla library sets it |
 
 `$BaseSpawnChance` is a local of `GetSuitableBaseStationForShipSpawn`, assigned fresh on every call, so a value written into it from outside is overwritten before anything reads it. Two lines inserted immediately after vanilla's assignment is the only place the multiplier can go. The selector matches exactly one node in the 9.00 file.
@@ -134,13 +134,13 @@ Egosoft does not publish from inside the game. Uploads go through `WorkshopTool`
 
 Working, verified in game on 9.00, on a savegame several hundred hours old — the case the whole design is built around. Settings for the run: reach 5 jumps, outpost cost 10 000, ambush multiplier 50x.
 
-| Check | Result |
-|---|---|
-| Applied on load | the two written settings land on the vanilla manager and are still there after eight hours of uninterrupted play |
-| Reach slider | moving it rebuilt the watched set immediately: 108 sectors at 4 jumps, 124 at 5 |
-| Outposts placed | three in about eight and a half hours of game time, in Pious Mists XI, Trinity Sanctum III and Wretched Skies X |
-| Patch | the XPath selector matches exactly one node, the merged XML is structurally valid, and the game reports no patch error for the file |
-| Script errors | none |
+| Check           | Result                                                                                                                              |
+|-----------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| Applied on load | the two written settings land on the vanilla manager and are still there after eight hours of uninterrupted play                    |
+| Reach slider    | moving it rebuilt the watched set immediately: 108 sectors at 4 jumps, 124 at 5                                                     |
+| Outposts placed | three in about eight and a half hours of game time, in Pious Mists XI, Trinity Sanctum III and Wretched Skies X                     |
+| Patch           | the XPath selector matches exactly one node, the merged XML is structurally valid, and the game reports no patch error for the file |
+| Script errors   | none                                                                                                                                |
 
 What the run does not measure is how much of that rate comes from the lowered cost and how much from the wider reach; both were changed at once. The half-ratio floor is likewise unconfirmed on its own — it changes *where* placements land rather than how many, and separating that from ordinary mining pressure needs a controlled comparison that has not been run.
 
