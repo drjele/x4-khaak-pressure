@@ -15,6 +15,5 @@ All notable changes to this project will be documented in this file.
 ### Notes
 
 - `$MinSpawnOutpostThreshold` is held at half the trigger, where vanilla's ratio is 0.8. At the top of the slider outposts therefore spread wider than in the stock game, though not more often. See the README.
-- `extension/preview.jpg` is not in the repository yet and is required before the first Workshop upload.
 
 [v1.0.0]: https://github.com/drjele/x4-khaak-pressure/releases/tag/v1.0.0

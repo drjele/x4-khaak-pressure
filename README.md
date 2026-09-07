@@ -1,5 +1,9 @@
 # Khaak Pressure for X4: Foundations
 
+<p align="center">
+  <img src="extension/preview.jpg" alt="Khaak Pressure" width="512">
+</p>
+
 The Kha'ak in X4 are a mining alarm, not an enemy. They watch the sectors within three gate jumps of one of their hives, add up how much ore, silicon and nividium is pulled out of each one, and when a sector's score crosses fifty thousand they drop an outpost on it. Everything about that is a number, and every one of those numbers is tuned for a galaxy where you are not supposed to notice them much.
 
 This mod turns three of those numbers into sliders: how far a hive reaches, how much mining an outpost costs them, and how often mining an asteroid drops a swarm on your miner's head.
@@ -124,13 +128,21 @@ Egosoft does not publish from inside the game. Uploads go through `WorkshopTool`
 ./publish.sh update "what changed"      # every upload after that
 ```
 
-`extension/preview.jpg` is required before the first upload and is not in the repository yet.
-
 `X_TOOLS_PATH` and `PROTON_PATH` override the automatic lookup, the same way `X4_PATH` does. The script keeps the Workshop id out of the manual-install `content.xml` so a local copy does not collide with a subscription; see the other drjele X4 mods for the long version of why.
 
 ## Status
 
-The single XPath selector and its cardinality are verified against the installed X4 9.00 game files, and the merged XML is structurally validated. The behaviour of the two written settings is derived from reading `md/khaak_activity.xml`; it has not yet been observed over a long game.
+Working, verified in game on 9.00, on a savegame several hundred hours old — the case the whole design is built around. Settings for the run: reach 5 jumps, outpost cost 10 000, ambush multiplier 50x.
+
+| Check | Result |
+|---|---|
+| Applied on load | the two written settings land on the vanilla manager and are still there after eight hours of uninterrupted play |
+| Reach slider | moving it rebuilt the watched set immediately: 108 sectors at 4 jumps, 124 at 5 |
+| Outposts placed | three in about eight and a half hours of game time, in Pious Mists XI, Trinity Sanctum III and Wretched Skies X |
+| Patch | the XPath selector matches exactly one node, the merged XML is structurally valid, and the game reports no patch error for the file |
+| Script errors | none |
+
+Two of the outposts landed in sectors that vanilla's 3-jump reach does not cover from any hive, which is the point of the reach slider. The half-ratio floor is the one thing a long run cannot confirm on its own — it changes *where* placements land rather than how many, and separating that from ordinary mining pressure needs a controlled comparison that has not been run.
 
 ## Legal
 
