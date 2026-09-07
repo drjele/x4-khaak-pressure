@@ -10,6 +10,25 @@ This mod turns three of those numbers into sliders: how far a hive reaches, how 
 
 **Requires X4: Foundations 9.00.** No DLC required, and no hard dependency on other mods. Works on an existing savegame.
 
+## Install
+
+```bash
+./install.sh
+```
+
+The helper copies `extension/` into the game's `extensions/<extension-id>`
+directory, using the id in `extension/content.xml`. It searches the usual Steam layouts and additional library folders. To choose an installation:
+
+```bash
+X4_PATH="/path/to/X4 Foundations" ./install.sh
+```
+
+Restart X4 after installing or updating. To remove the manual installation:
+
+```bash
+./install.sh --uninstall
+```
+
 ## The sliders
 
 | Slider                       | Range           | Vanilla | What it is                                                                                                                                                                  |
@@ -37,22 +56,6 @@ If you want the ratio back, change one line in `drjele_khaak_pressure.xml`:
 **Outpost cost** is denominated in mining. Because your own miners count double, 50 000 is roughly 20 000 units of silicon, 28 600 of ore or 10 000 of nividium pulled out of a single sector. At 10 000 that is a fifth of it — a couple of full L miner runs.
 
 **Ambush chance multiplier** only does anything in a sector that already holds a Kha'ak outpost; everywhere else vanilla's chance is zero no matter what this says, because the term it multiplies is scaled by a sector activity value that only accumulates while an outpost is alive. Inside such a sector the vanilla chance is 0.03 % per mined unit at full activity, times 1.2 for ore and silicon or 2.7 for nividium. High multipliers saturate on a large haul.
-
-## Install
-
-```bash
-./install.sh
-```
-
-That finds your X4 installation — the usual Steam layouts including extra library folders — and copies `extension/` into `X4 Foundations/extensions/drjele_khaak_pressure`. If it cannot find the game, or you want a different copy of it, point it there yourself:
-
-```bash
-X4_PATH="/path/to/X4 Foundations" ./install.sh
-```
-
-**Restart X4** — extensions are only read at startup.
-
-It copies rather than symlinks on purpose: X4 only enumerates real directories under `extensions/`, and silently ignores a symlink placed there. So re-run `./install.sh` after every edit. `./install.sh --uninstall` removes it again.
 
 ## How it works
 
@@ -119,17 +122,6 @@ A patch whose XPath finds nothing is reported without any of that, at startup, b
 
 Take the extension out and the sliders stop being applied — but the values already written into the vanilla manager stay in the savegame, because they are the manager's own variables. They are reset the next time you start a new game, and can be put back at any time by reinstalling this mod with the vanilla numbers in the configuration cue. Nothing else of this mod persists; it adds no cues to the Kha'ak manager and stores no state of its own.
 
-## Publishing to the Steam Workshop
-
-Egosoft does not publish from inside the game. Uploads go through `WorkshopTool`, shipped in the **X Tools** package — Steam app 282160, `steam://install/282160`. Steam has to be running and logged in with an account that owns X4.
-
-```bash
-./publish.sh publish                    # first upload
-./publish.sh update "what changed"      # every upload after that
-```
-
-`X_TOOLS_PATH` and `PROTON_PATH` override the automatic lookup, the same way `X4_PATH` does. The script keeps the Workshop id out of the manual-install `content.xml` so a local copy does not collide with a subscription; see the other drjele X4 mods for the long version of why.
-
 ## Status
 
 Working, verified in game on 9.00, on a savegame several hundred hours old — the case the whole design is built around. Settings for the run: reach 5 jumps, outpost cost 10 000, ambush multiplier 50x.
@@ -143,6 +135,28 @@ Working, verified in game on 9.00, on a savegame several hundred hours old — t
 | Script errors   | none                                                                                                                                |
 
 What the run does not measure is how much of that rate comes from the lowered cost and how much from the wider reach; both were changed at once. The half-ratio floor is likewise unconfirmed on its own — it changes *where* placements land rather than how many, and separating that from ordinary mining pressure needs a controlled comparison that has not been run.
+
+## Publishing to the Steam Workshop
+
+Install **X Tools** (Steam app 282160) and keep Steam running and logged in with an account that owns X4. On Linux, install Proton as well; on Windows, run the helper from Git Bash, MSYS or Cygwin.
+
+```bash
+./publish.sh publish
+./publish.sh update "what changed"
+```
+
+Use `publish` once, then `update` with a change note. `X4_PATH`,
+`X_TOOLS_PATH` and `PROTON_PATH` override automatic discovery. The staging location must contain an `extensions` directory.
+
+The first upload records the numeric id in `steam/workshop-id`; retain that file for future updates. The readable id in the repository's `content.xml`
+stays unchanged. After publishing, open the printed Workshop URL, complete any required Steam agreement and choose the item's visibility. Avoid keeping both the manual installation and a subscription to the same mod enabled.
+
+Update the manifest version and release date together with `CHANGELOG.md`
+when releasing. See [Development](DEVELOPMENT.md) for staging, platform and release conventions.
+
+## Development
+
+See [DEVELOPMENT.md](DEVELOPMENT.md) for setup, code style, validation and release conventions.
 
 ## Legal
 
