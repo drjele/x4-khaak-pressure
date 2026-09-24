@@ -50,7 +50,7 @@
         <library name="ApplySettings">
             <actions>
                 <set_value name="$Config" exact="if global.$DrJeleKhaakPressureConfig? then global.$DrJeleKhaakPressureConfig else table[]"/>
-                <set_value name="$DebugChance" exact="if $Config.$DebugChance? then $Config.$DebugChance else 0"/>
+                <set_value name="$DebugChance" exact="if global.$DrJeleKhaakDebugChance? then global.$DrJeleKhaakDebugChance else (if $Config.$DebugChance? then $Config.$DebugChance else 0)"/>
 
                 <set_value name="$GateRange" exact="if global.$DrJeleKhaakHiveGateRange? then global.$DrJeleKhaakHiveGateRange else (if $Config.$HiveGateRange? then $Config.$HiveGateRange else 3)"/>
                 <set_value name="$Threshold" exact="if global.$DrJeleKhaakOutpostThreshold? then global.$DrJeleKhaakOutpostThreshold else (if $Config.$OutpostThreshold? then $Config.$OutpostThreshold else 50000)"/>
@@ -59,6 +59,7 @@
 
                 <set_value name="md.Khaak_Activity.Manager.$SpawnOutpostThreshold" exact="$Threshold"/>
                 <set_value name="md.Khaak_Activity.Manager.$MinSpawnOutpostThreshold" exact="$MinThreshold"/>
+                <debug_text text="'DrJele Khaak Pressure: applied gate range %s, outpost threshold %s (min %s), watching %s sectors'.[$GateRange, $Threshold, $MinThreshold, md.Khaak_Activity.Manager.$WatchedSectors.count]" chance="$DebugChance"/>
 
                 <do_if value="md.Khaak_Activity.Manager.$HiveStationGateRange != $GateRange">
                     <debug_text text="'DrJele Khaak Pressure: gate range %s -> %s, outpost threshold %s (min %s)'.[md.Khaak_Activity.Manager.$HiveStationGateRange, $GateRange, $Threshold, $MinThreshold]" chance="$DebugChance"/>
@@ -70,7 +71,7 @@
 
         <library name="RebuildWatchedSectors">
             <actions>
-                <set_value name="$DebugChance" exact="if global.$DrJeleKhaakPressureConfig? then global.$DrJeleKhaakPressureConfig.$DebugChance else 0"/>
+                <set_value name="$DebugChance" exact="if global.$DrJeleKhaakDebugChance? then global.$DrJeleKhaakDebugChance else (if global.$DrJeleKhaakPressureConfig? then global.$DrJeleKhaakPressureConfig.$DebugChance else 0)"/>
                 <set_value name="$ValidSectors" exact="[]"/>
                 <do_for_each name="$Hive" in="md.Khaak_Activity.Manager.$HiveStations">
                     <find_sector_in_range name="$ValidSectors" object="$Hive"

@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [v1.1.0] - 2026-09-24 - Debug logging toggle
+
 ### Changed
 
 - Standardize repository settings, development checks, code style and documentation.
@@ -11,6 +13,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **Debug logging** toggle in Extension Options: switches the mod's debug log output on and off in game, instead of editing `$DebugChance` and reinstalling.
+- The debug log gets the settings in force on every load and every slider change, not only when the reach changes, so a quiet log no longer looks like a mod that is not running.
 - `publish.sh update` options `--minor`, `--namedesc` and `--readback`, for an update that leaves the version number alone, one that also pushes the name and description to Steam, and one that writes Steam's own text back into `content.xml.steam`.
 
 ### Fixed
@@ -35,4 +39,5 @@ All notable changes to this project will be documented in this file.
 
 - `$MinSpawnOutpostThreshold` is held at half the trigger, where vanilla's ratio is 0.8. At the top of the slider outposts therefore spread wider than in the stock game, though not more often. See the README.
 
+[v1.1.0]: https://github.com/drjele/x4-khaak-pressure/releases/tag/v1.1.0
 [v1.0.0]: https://github.com/drjele/x4-khaak-pressure/releases/tag/v1.0.0

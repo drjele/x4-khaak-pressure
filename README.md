@@ -100,7 +100,7 @@ Each can also be overridden at runtime without touching the file:
 <set_value name="global.$DrJeleKhaakSpawnChanceFactor" exact="10"/>
 ```
 
-Set `$DebugChance` to 100 in the configuration cue to have every applied change written to the debug log.
+Turn on **Debug logging** in the options, or set `$DebugChance` to 100 in the configuration cue, to have every applied change written to the debug log.
 
 ## Debugging
 
@@ -112,9 +112,10 @@ Add this to the game's launch options — Steam, right click X4, **Properties �
 
 The log lands next to your savegames: `$HOME/.config/EgoSoft/X4/<userid>/debuglog.txt` on Linux, `Documents\Egosoft\X4\<userid>\debuglog.txt` on Windows. If Steam is installed as a snap it runs the game with a redirected home, which puts both under `~/snap/steam/common/`. `all` turns on every one of the engine's debug channels; a narrower filter only makes sense once you know which channel a message uses, and the engine prints `Unknown debug filter` for a name it does not recognise.
 
-The mod itself is silent by default. Set `$DebugChance` to `100` in the configuration cue of `extension/md/drjele_khaak_pressure.xml`, re-run `./install.sh` and restart, and every applied change is written out:
+The mod itself is silent by default. To hear from it, turn on **Debug logging** in **Options → Extension Options → Khaak Pressure** (needs SirNukes Mod Support APIs); without the API, set `$DebugChance` to `100` in the configuration cue of `extension/md/drjele_khaak_pressure.xml`, re-run `./install.sh` and restart. Either way, every load and every slider change writes the settings in force, and a change of reach is written out on its own:
 
 ```
+DrJele Khaak Pressure: applied gate range 6, outpost threshold 50000 (min 25000), watching 214 sectors
 DrJele Khaak Pressure: gate range 3 -> 6, outpost threshold 50000 (min 25000)
 DrJele Khaak Pressure: watching 214 sectors after rebuild
 ```

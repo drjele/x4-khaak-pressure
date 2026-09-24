@@ -43,6 +43,17 @@
             $args      = table[$min = 1, $max = 100, $step = 1, $suffix = 'x'],
             $callback  = OnSpawnChanceFactorChanged,
             ]"/>
+                <signal_cue_instantly
+                        cue="md.Simple_Menu_Options.Register_Option"
+                        param="table[
+            $id        = 'drjele_khaak_pressure_debug',
+            $category  = 'Khaak Pressure',
+            $name      = 'Debug logging',
+            $mouseover = 'Writes every applied setting and every rebuild of the watched sectors to the debug log. Needs the game started with -debug scripts.',
+            $type      = 'button',
+            $default   = 0,
+            $callback  = OnDebugChanged,
+            ]"/>
             </actions>
         </cue>
 
@@ -72,6 +83,15 @@
             </conditions>
             <actions>
                 <set_value name="global.$DrJeleKhaakSpawnChanceFactor" exact="event.param.$value"/>
+            </actions>
+        </cue>
+
+        <cue name="OnDebugChanged" instantiate="true">
+            <conditions>
+                <event_cue_signalled/>
+            </conditions>
+            <actions>
+                <set_value name="global.$DrJeleKhaakDebugChance" exact="if event.param.$value then 100 else 0"/>
             </actions>
         </cue>
 
